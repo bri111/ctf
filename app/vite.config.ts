@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
-  base: '/app/',  // ← add this line
+  base: '/ctf/' // ← add this line
 })
