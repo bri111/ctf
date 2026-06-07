@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NovaBlog — Tech & Design</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #fff; color: #1a1a1a; }
+
+    /* TOPBAR */
+    .topbar {
+      background: #000d87;
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      text-align: center;
+      padding: 7px;
+      letter-spacing: 0.5px;
+    }
+
+    /* NAV */
+    nav {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 18px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 700;
+      color: #7f0707;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links { display: flex; gap: 28px; font-size: 14px; font-weight: 600; }
+    .nav-links a { text-decoration: none; color: #374151; transition: color 0.15s; }
+    .nav-links a:hover { color: #7f0707; }
+
+    .subscribe-btn {
+      padding: 8px 20px;
+      background: #7f0707;
+      color: #fff;
+      border: none; border-radius: 5px;
+      font-size: 13px; font-family: inherit; font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* HERO */
+    .hero {
+      max-width: 780px;
+      margin: 60px auto 50px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 3px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 46px; line-height: 1.15;
+      color: #111; margin-bottom: 16px;
+    }
+
+    .hero p { font-size: 18px; color: #6b7280; line-height: 1.7; margin-bottom: 28px; }
+
+    .hero-meta { font-size: 13px; color: #9ca3af; }
+    .hero-meta span { margin: 0 8px; }
+
+    /* POSTS GRID */
+    .posts {
+      max-width: 1100px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .post-card { border: 1px solid #f3f4f6; border-radius: 8px; overflow: hidden; transition: box-shadow 0.15s; }
+    .post-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+    .post-img {
+      height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+    }
+
+    .bg-blue   { background: #dbeafe; }
+    .bg-green  { background: #dcfce7; }
+    .bg-orange { background: #ffedd5; }
+    .bg-purple { background: #ede9fe; }
+    .bg-pink   { background: #fce7f3; }
+    .bg-teal   { background: #ccfbf1; }
+
+    .post-body { padding: 18px; }
+    .post-tag  { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #7f0707; margin-bottom: 8px; }
+    .post-title { font-family: 'Playfair Display', serif; font-size: 17px; color: #111; margin-bottom: 8px; line-height: 1.4; }
+    .post-excerpt { font-size: 13px; color: #6b7280; line-height: 1.6; }
+    .post-date { font-size: 12px; color: #9ca3af; margin-top: 12px; }
+
+    /* CHALLENGE HINT SECTION */
+    .challenge-section {
+      max-width: 780px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+
+    .challenge-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #000d87;
+      border-radius: 6px;
+      padding: 20px 24px;
+    }
+
+    .challenge-card h3 { font-size: 15px; font-weight: 700; color: #000d87; margin-bottom: 8px; }
+    .challenge-card p  { font-size: 14px; color: #475569; line-height: 1.7; }
+
+    .path-hint {
+      display: inline-block;
+      background: #0f172a;
+      color: #7dd3fc;
+      font-family: monospace;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin: 2px 2px;
+    }
+
+    /* SECRET PAGE (shown via hash) */
+    .secret-page {
+      display: none;
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+
+    .secret-page.active { display: block; }
+
+    .secret-header {
+      font-family: monospace;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #0f172a;
+      border-radius: 6px;
+      color: #4ade80;
+    }
+
+    .directory-listing {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .dir-row { padding: 4px 0; display: flex; gap: 20px; }
+    .dir-row .perm { color: #94a3b8; }
+    .dir-row .name { color: #7dd3fc; }
+    .dir-row .name.flag-file { color: #f8cf1e; cursor: pointer; text-decoration: underline; }
+    .dir-row .size { color: #64748b; }
+
+    .flag-reveal {
+      display: none;
+      background: #0a0520;
+      border: 1px solid #f8cf1e;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      font-family: monospace;
+      font-size: 18px;
+      color: #f8cf1e;
+      margin-top: 16px;
+    }
+
+    .flag-reveal.show { display: block; }
+
+    .back-link {
+      display: inline-block;
+      font-size: 13px;
+      color: #000d87;
+      text-decoration: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- robots.txt simulation hint in meta -->
+  <!-- /robots.txt would contain:
+       User-agent: *
+       Disallow: /admin/
+       Disallow: /backup/
+       Disallow: /secret-files/
+  -->
+
+  <div class="topbar">☀️ New post every Monday — Subscribe to stay sharp</div>
+
+  <nav>
+    <div class="nav-logo">NovaBlog</div>
+    <div class="nav-links">
+      <a href="#">Tech</a>
+      <a href="#">Design</a>
+      <a href="#">Security</a>
+      <a href="#">About</a>
+    </div>
+    <button class="subscribe-btn">Subscribe</button>
+  </nav>
+
+  <!-- MAIN BLOG PAGE -->
+  <div id="main-page">
+    <div class="hero">
+      <div class="hero-tag">Editor's Pick</div>
+      <h1>Why Every Developer Should Learn Basic Web Security</h1>
+      <p>Understanding how attackers think is the first step to building software that doesn't crumble under pressure.</p>
+      <div class="hero-meta">
+        <span>By Alex Carter</span>·
+        <span>June 3, 2024</span>·
+        <span>8 min read</span>
+      </div>
+    </div>
+
+    <div class="posts">
+      <div class="post-card">
+        <div class="post-img bg-blue">🔐</div>
+        <div class="post-body">
+          <div class="post-tag">Security</div>
+          <div class="post-title">The Basics of SQL Injection in 5 Minutes</div>
+          <div class="post-excerpt">One misplaced quote can expose your entire database. Here's what you need to know.</div>
+          <div class="post-date">May 28, 2024</div>
+        </div>
+      </div>
+      <div class="post-card">
+        <div class="post-img bg-green">🌿</div>
+        <div class="post-body">
+          <div class="post-tag">Design</div>
+          <div class="post-title">Building Design Systems That Scale</div>
+          <div class="post-excerpt">Tokens, components, and the philosophy behind cohesive product design.</div>
+          <div class="post-date">May 21, 2024</div>
+        </div>
+      </div>
+      <div class="post-card">
+        <div class="post-img bg-orange">⚡</div>
+        <div class="post-body">
+          <div class="post-tag">Performance</div>
+          <div class="post-title">Core Web Vitals: A Practical Guide for 2024</div>
+          <div class="post-excerpt">LCP, CLS, INP — demystified with actionable fixes you can ship today.</div>
+          <div class="post-date">May 14, 2024</div>
+        </div>
+      </div>
+      <div class="post-card">
+        <div class="post-img bg-purple">🧠</div>
+        <div class="post-body">
+          <div class="post-tag">AI</div>
+          <div class="post-title">Using LLMs as a Coding Copilot Without Getting Burned</div>
+          <div class="post-excerpt">Smart prompting strategies that keep you in control of your codebase.</div>
+          <div class="post-date">May 7, 2024</div>
+        </div>
+      </div>
+      <div class="post-card">
+        <div class="post-img bg-pink">🎨</div>
+        <div class="post-body">
+          <div class="post-tag">CSS</div>
+          <div class="post-title">Container Queries Are Finally Here — Use Them</div>
+          <div class="post-excerpt">Responsive components that react to their container, not the viewport.</div>
+          <div class="post-date">Apr 30, 2024</div>
+        </div>
+      </div>
+      <div class="post-card">
+        <div class="post-img bg-teal">🛰️</div>
+        <div class="post-body">
+          <div class="post-tag">DevOps</div>
+          <div class="post-title">Zero Downtime Deployments on a Budget</div>
+          <div class="post-excerpt">Blue-green, canary, and rolling deploys without breaking the bank.</div>
+          <div class="post-date">Apr 23, 2024</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge-section">
+      <div class="challenge-card">
+        <h3>🕵️ CTF Challenge: Robots.txt Recon</h3>
+        <p>
+          Web developers often forget that <span class="path-hint">robots.txt</span> is publicly readable and can
+          accidentally reveal hidden directories. Check the paths that search engines are told to avoid.
+          Try navigating to <span class="path-hint">#/backup/</span> or <span class="path-hint">#/secret-files/</span>
+          in the URL to discover what's hiding on this server.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP DIRECTORY (simulated via hash routing) -->
+  <div class="secret-page" id="page-backup">
+    <div class="secret-header">GET /backup/ HTTP/1.1 → 200 OK</div>
+    <h2 style="font-family:monospace;font-size:18px;margin-bottom:16px;color:#1a1a1a;">Index of /backup/</h2>
+    <div class="directory-listing">
+      <div class="dir-row"><span class="perm">drwxr-xr-x</span><span class="name">[DIR]</span><span>./</span></div>
+      <div class="dir-row"><span class="perm">drwxr-xr-x</span><span class="name">[DIR]</span><span>../</span></div>
+      <div class="dir-row"><span class="perm">-rw-r--r--</span><span class="name">archive_2022.tar.gz</span><span class="size">14.2 MB</span></div>
+      <div class="dir-row"><span class="perm">-rw-r--r--</span><span class="name">db_dump_may.sql</span><span class="size">2.1 MB</span></div>
+      <div class="dir-row"><span class="perm">-rw-r--r--</span><span class="name" style="color:#94a3b8;">nothing_here.txt</span><span class="size">12 B</span></div>
+    </div>
+    <p style="font-size:14px;color:#64748b;">Wrong directory. The flag isn't here — keep exploring.</p>
+    <span class="back-link" onclick="window.location.hash=''">← Back to blog</span>
+  </div>
+
+  <!-- SECRET FILES DIRECTORY -->
+  <div class="secret-page" id="page-secret-files">
+    <div class="secret-header">GET /secret-files/ HTTP/1.1 → 200 OK</div>
+    <h2 style="font-family:monospace;font-size:18px;margin-bottom:16px;color:#1a1a1a;">Index of /secret-files/</h2>
+    <div class="directory-listing">
+      <div class="dir-row"><span class="perm">drwxr-xr-x</span><span class="name">[DIR]</span><span>./</span></div>
+      <div class="dir-row"><span class="perm">drwxr-xr-x</span><span class="name">[DIR]</span><span>../</span></div>
+      <div class="dir-row"><span class="perm">-rw-r--r--</span><span class="name">config.bak</span><span class="size">3.4 KB</span></div>
+      <div class="dir-row"><span class="perm">-rw-r--r--</span><span class="name">notes.txt</span><span class="size">840 B</span></div>
+      <div class="dir-row"><span class="perm">-rwxr-xr-x</span><span class="name flag-file" onclick="revealFlag()">flag.txt</span><span class="size">38 B</span></div>
+    </div>
+    <div class="flag-reveal" id="flag-reveal">
+      CTF{r0b0ts_d0nt_h1d3_s3cr3ts}
+    </div>
+    <span class="back-link" onclick="window.location.hash=''">← Back to blog</span>
+  </div>
+
+  <script>
+    function revealFlag() {
+      document.getElementById('flag-reveal').classList.add('show');
+    }
+
+    function route() {
+      const hash = window.location.hash;
+      const mainPage = document.getElementById('main-page');
+      const backupPage = document.getElementById('page-backup');
+      const secretPage = document.getElementById('page-secret-files');
+
+      mainPage.style.display   = 'block';
+      backupPage.classList.remove('active');
+      secretPage.classList.remove('active');
+
+      if (hash === '#/backup/') {
+        mainPage.style.display = 'none';
+        backupPage.classList.add('active');
+      } else if (hash === '#/secret-files/') {
+        mainPage.style.display = 'none';
+        secretPage.classList.add('active');
+      }
+    }
+
+    window.addEventListener('hashchange', route);
+    route();
+  </script>
+</body>
+</html>

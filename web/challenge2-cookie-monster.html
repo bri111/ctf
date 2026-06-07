@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopEasy — My Account</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body { font-family: 'Nunito', sans-serif; background: #fafafa; color: #1a1a2e; }
+
+    /* NAV */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0 32px;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-size: 20px; font-weight: 700; color: #7f0707; letter-spacing: -0.5px; }
+    .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: #6b7280; }
+    .nav-links a { text-decoration: none; transition: color 0.15s; }
+    .nav-links a:hover { color: #7f0707; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .cart-btn {
+      padding: 7px 16px;
+      background: #7f0707;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px; font-family: inherit; font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* CONTENT */
+    .page { max-width: 860px; margin: 40px auto; padding: 0 20px; }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, #7f0707 0%, #000d87 100%);
+      border-radius: 12px;
+      padding: 28px 32px;
+      color: #fff;
+      margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .welcome-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .welcome-banner p  { font-size: 14px; opacity: 0.8; }
+
+    .role-badge {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .role-badge.user  { background: rgba(255,255,255,0.2); color: #fff; }
+    .role-badge.admin { background: #f8cf1e; color: #000d87; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 8px; }
+    .card-value { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+    .card-sub   { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+    .orders-table {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .orders-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .orders-table th {
+      background: #f9fafb;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .orders-table td { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; }
+    .orders-table tr:last-child td { border-bottom: none; }
+
+    .status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    .status.delivered  { background: #dcfce7; color: #166534; }
+    .status.processing { background: #fef9c3; color: #854d0e; }
+    .status.shipped    { background: #dbeafe; color: #1e40af; }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      display: none;
+      background: #fff;
+      border: 2px solid #f8cf1e;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .admin-panel h3 { font-size: 16px; font-weight: 700; color: #000d87; margin-bottom: 16px; }
+
+    .flag-box {
+      background: #0a0520;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: monospace;
+      font-size: 16px;
+      color: #f8cf1e;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .admin-hint {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    /* HINT BOX */
+    .hint-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #1e40af;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    .hint-box strong { display: block; margin-bottom: 4px; }
+
+    .cookie-display {
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #334155;
+      margin-top: 8px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ShopEasy 🛒</div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Products</a>
+    <a href="#">Deals</a>
+    <a href="#">Support</a>
+  </div>
+  <div class="nav-right">
+    <button class="cart-btn">🛒 Cart (3)</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="welcome-banner" id="banner">
+    <div>
+      <h2 id="welcome-text">Welcome back, guest!</h2>
+      <p id="role-text">You are browsing as a regular user.</p>
+    </div>
+    <div class="role-badge user" id="role-badge">User</div>
+  </div>
+
+  <!-- Admin panel — only visible when role=admin cookie is set -->
+  <div class="admin-panel" id="admin-panel">
+    <h3>🔐 Admin Control Panel</h3>
+    <p style="font-size:13px;color:#6b7280;margin-bottom:14px;">You accessed the admin panel by manipulating your session cookie. Well done!</p>
+    <div class="flag-box">CTF{c00k13_m4n1pul4t10n}</div>
+    <p class="admin-hint">
+      The server was blindly trusting the <code>role</code> cookie without any server-side validation or signing.
+      In a real app, session tokens must be signed (e.g. JWT with HMAC, or server-side sessions) so clients cannot forge them.
+    </p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Total Orders</div>
+      <div class="card-value">14</div>
+      <div class="card-sub">3 in progress</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Points Balance</div>
+      <div class="card-value">2,340</div>
+      <div class="card-sub">Redeem for discounts</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Saved Items</div>
+      <div class="card-value">7</div>
+      <div class="card-sub">2 on sale now</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Member Since</div>
+      <div class="card-value" style="font-size:18px">Mar 2022</div>
+      <div class="card-sub">Gold member</div>
+    </div>
+  </div>
+
+  <div class="orders-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#SE-10482</td>
+          <td>USB-C Hub, Mousepad XL</td>
+          <td>$54.99</td>
+          <td>Jun 1, 2024</td>
+          <td><span class="status processing">Processing</span></td>
+        </tr>
+        <tr>
+          <td>#SE-10391</td>
+          <td>Mechanical Keyboard</td>
+          <td>$129.00</td>
+          <td>May 28, 2024</td>
+          <td><span class="status shipped">Shipped</span></td>
+        </tr>
+        <tr>
+          <td>#SE-10210</td>
+          <td>Monitor Stand, Cable Organizer</td>
+          <td>$38.50</td>
+          <td>May 15, 2024</td>
+          <td><span class="status delivered">Delivered</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="hint-box">
+    <strong>🍪 Challenge Hint</strong>
+    The application checks your role from a cookie. Open DevTools → Application → Cookies
+    and look at what cookies are set. What happens if you change the <code>role</code> cookie value to <code>admin</code>
+    and reload the page?
+    <div class="cookie-display" id="cookie-display">Loading cookies...</div>
+  </div>
+
+</div>
+
+<script>
+  // Set a default "user" role cookie if none exists
+  function getCookie(name) {
+    const val = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+    return val ? decodeURIComponent(val.split('=')[1]) : null;
+  }
+
+  function setCookie(name, value) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
+  }
+
+  // Set default cookies on first visit
+  if (!getCookie('role'))     setCookie('role', 'user');
+  if (!getCookie('username')) setCookie('username', 'guest_shopper');
+
+  const role     = getCookie('role');
+  const username = getCookie('username');
+
+  // Update UI based on role
+  document.getElementById('welcome-text').textContent = `Welcome back, ${username}!`;
+
+  if (role === 'admin') {
+    document.getElementById('role-text').textContent  = 'You are browsing as an administrator.';
+    document.getElementById('role-badge').textContent = 'Admin';
+    document.getElementById('role-badge').className   = 'role-badge admin';
+    document.getElementById('admin-panel').style.display = 'block';
+  } else {
+    document.getElementById('role-text').textContent  = 'You are browsing as a regular user.';
+  }
+
+  // Show current cookies in the hint box
+  document.getElementById('cookie-display').textContent = document.cookie || '(no cookies found)';
+</script>
+</body>
+</html>
