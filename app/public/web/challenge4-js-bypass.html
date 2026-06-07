@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VaultApp — Secure File Storage</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: #0d0d0d;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAV */
+    nav {
+      padding: 16px 32px;
+      border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 800; color: #fff;
+    }
+
+    .logo-vault {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: #7f0707;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 600; color: #888; }
+    .nav-links a { text-decoration: none; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* LOCK SCREEN */
+    .lock-screen {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lock-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 420px;
+      text-align: center;
+    }
+
+    .lock-icon { font-size: 52px; margin-bottom: 20px; }
+
+    .lock-card h2 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .lock-card p  { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 28px; }
+
+    .pin-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pin-digit {
+      width: 52px; height: 58px;
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 8px;
+      font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .pin-digit:focus { border-color: #7f0707; }
+
+    .unlock-btn {
+      width: 100%;
+      padding: 14px;
+      background: #7f0707;
+      color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-family: 'Syne', sans-serif; font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 12px;
+    }
+
+    .unlock-btn:hover { background: #a00909; }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 13px; font-family: 'JetBrains Mono', monospace;
+      min-height: 18px;
+      margin-bottom: 8px;
+    }
+
+    .hint-toggle {
+      font-size: 12px; color: #555;
+      cursor: pointer; text-decoration: underline;
+      background: none; border: none; font-family: inherit;
+    }
+    .hint-toggle:hover { color: #888; }
+
+    .hint-box {
+      display: none;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.8;
+    }
+
+    .hint-box .hl { color: #f8cf1e; }
+
+    /* VAULT (unlocked state) */
+    .vault-screen {
+      display: none;
+      flex: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      width: 100%;
+    }
+
+    .vault-screen.active { display: block; }
+    .lock-screen.hidden  { display: none; }
+
+    .vault-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .vault-header h2 { font-size: 22px; font-weight: 800; color: #fff; }
+    .vault-header p  { font-size: 13px; color: #666; margin-top: 4px; }
+
+    .lock-btn {
+      padding: 8px 18px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #888;
+      font-size: 13px; font-family: inherit; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .lock-btn:hover { border-color: #555; color: #ccc; }
+
+    .files-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .file-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .file-card:hover { background: #222; border-color: #444; }
+
+    .file-card.flag-file { border-color: #7f0707; }
+    .file-card.flag-file:hover { background: #1a0808; border-color: #a00909; }
+
+    .file-icon { font-size: 32px; margin-bottom: 12px; }
+    .file-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .file-meta { font-size: 12px; color: #555; font-family: 'JetBrains Mono', monospace; }
+
+    /* Flag modal */
+    .flag-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: center; justify-content: center;
+    }
+
+    .flag-modal.open { display: flex; }
+
+    .flag-modal-box {
+      background: #1a1a1a;
+      border: 1px solid #7f0707;
+      border-top: 3px solid #f8cf1e;
+      border-radius: 12px;
+      padding: 36px;
+      width: 480px;
+      text-align: center;
+    }
+
+    .flag-modal-box h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .flag-modal-box p  { font-size: 14px; color: #888; margin-bottom: 20px; line-height: 1.6; }
+
+    .flag-display {
+      background: #0d0d0d;
+      border: 1px solid #f8cf1e;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 17px;
+      color: #f8cf1e;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .close-modal-btn {
+      padding: 10px 24px;
+      background: #333;
+      border: none; border-radius: 6px;
+      color: #ccc; font-family: inherit; font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="logo-vault">🔒</div>
+    VaultApp
+  </div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Files</a>
+    <a href="#">Settings</a>
+  </div>
+</nav>
+
+<!-- LOCK SCREEN -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">🔐</div>
+    <h2>Enter Your PIN</h2>
+    <p>Your vault is locked. Enter the 4-digit PIN to access your files.</p>
+
+    <div class="pin-row">
+      <input class="pin-digit" id="p1" maxlength="1" type="password" inputmode="numeric" />
+      <input class="pin-digit" id="p2" maxlength="1" type="password" inputmode="numeric" />
+      <input class="pin-digit" id="p3" maxlength="1" type="password" inputmode="numeric" />
+      <input class="pin-digit" id="p4" maxlength="1" type="password" inputmode="numeric" />
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <button class="unlock-btn" onclick="tryUnlock()">Unlock Vault</button>
+
+    <button class="hint-toggle" onclick="toggleHint()">Need a hint?</button>
+
+    <div class="hint-box" id="hint-box">
+      <span class="hl">Hint:</span> The PIN is validated entirely in <span class="hl">JavaScript</span> on this page.
+      You don't need to guess it — open DevTools → Sources and read the JS.
+      Look for where the PIN comparison happens.<br><br>
+      <span class="hl">Alternatively:</span> Open the browser console and call
+      <span class="hl">unlock()</span> directly.
+    </div>
+  </div>
+</div>
+
+<!-- VAULT (visible after unlock) -->
+<div class="vault-screen" id="vault-screen">
+  <div class="vault-header">
+    <div>
+      <h2>🗄️ Your Vault</h2>
+      <p>8 files · 42.3 MB used</p>
+    </div>
+    <button class="lock-btn" onclick="lock()">🔒 Lock vault</button>
+  </div>
+
+  <div class="files-grid">
+    <div class="file-card">
+      <div class="file-icon">📄</div>
+      <div class="file-name">resume_2024.pdf</div>
+      <div class="file-meta">PDF · 1.2 MB · May 2024</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">🖼️</div>
+      <div class="file-name">vacation_photos.zip</div>
+      <div class="file-meta">ZIP · 14.8 MB · Apr 2024</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">📊</div>
+      <div class="file-name">budget_q1.xlsx</div>
+      <div class="file-meta">XLSX · 880 KB · Mar 2024</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">🔑</div>
+      <div class="file-name">passwords.kdbx</div>
+      <div class="file-meta">KDBX · 64 KB · Feb 2024</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">📝</div>
+      <div class="file-name">notes_private.txt</div>
+      <div class="file-meta">TXT · 12 KB · Jan 2024</div>
+    </div>
+    <div class="file-card flag-file" onclick="openFlag()">
+      <div class="file-icon">🚩</div>
+      <div class="file-name">flag.txt</div>
+      <div class="file-meta">TXT · 38 B · Jun 2024</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">🗂️</div>
+      <div class="file-name">tax_docs_2023.zip</div>
+      <div class="file-meta">ZIP · 24.2 MB · Dec 2023</div>
+    </div>
+    <div class="file-card">
+      <div class="file-icon">📷</div>
+      <div class="file-name">profile_pic.png</div>
+      <div class="file-meta">PNG · 1.1 MB · Nov 2023</div>
+    </div>
+  </div>
+</div>
+
+<!-- FLAG MODAL -->
+<div class="flag-modal" id="flag-modal">
+  <div class="flag-modal-box">
+    <h3>🎉 You cracked it!</h3>
+    <p>You bypassed the client-side PIN check by reading the JavaScript source. Never trust client-side authentication alone.</p>
+    <div class="flag-display">CTF{cl13nt_s1d3_auth_byp4ss}</div>
+    <button class="close-modal-btn" onclick="document.getElementById('flag-modal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<script>
+  // VULNERABILITY: PIN is stored and compared client-side
+  // Anyone who reads this JS can find the correct PIN or call unlock() directly
+  const VAULT_PIN = "7419";
+
+  function tryUnlock() {
+    const pin = ['p1','p2','p3','p4'].map(id => document.getElementById(id).value).join('');
+    if (pin === VAULT_PIN) {
+      unlock();
+    } else {
+      document.getElementById('error-msg').textContent = 'Incorrect PIN. Try again.';
+      ['p1','p2','p3','p4'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('p1').focus();
+    }
+  }
+
+  // This function is also directly callable from the console (no auth check!)
+  function unlock() {
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('vault-screen').classList.add('active');
+  }
+
+  function lock() {
+    document.getElementById('lock-screen').classList.remove('hidden');
+    document.getElementById('vault-screen').classList.remove('active');
+    ['p1','p2','p3','p4'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('error-msg').textContent = '';
+  }
+
+  function openFlag() {
+    document.getElementById('flag-modal').classList.add('open');
+  }
+
+  function toggleHint() {
+    const h = document.getElementById('hint-box');
+    h.style.display = h.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // Auto-advance PIN digits
+  ['p1','p2','p3','p4'].forEach((id, i, arr) => {
+    document.getElementById(id).addEventListener('input', function() {
+      if (this.value && i < arr.length - 1) {
+        document.getElementById(arr[i+1]).focus();
+      }
+    });
+  });
+
+  document.getElementById('p4').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryUnlock();
+  });
+</script>
+</body>
+</html>

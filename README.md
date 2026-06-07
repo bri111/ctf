@@ -19,6 +19,9 @@ cd YOUR_REPO_NAME
 
 # Install dependencies
 npm install
+npm install --save-dev gh-pages
+
+
 ```
 
 ---
