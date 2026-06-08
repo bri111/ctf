@@ -62,9 +62,9 @@ export default function ChallengeModal({ challenge, solved, onClose, onSubmit, p
           <strong>Hint:</strong> {ch.hint}
         </div>
 
-        {isSolved && (
-          <div className="solved-banner">✅ You already solved this challenge!</div>
-        )}
+        {/*{isSolved && (*/}
+        {/*  <div className="solved-banner">✅ You already solved this challenge!</div>*/}
+        {/*)}*/}
 
         <div className="flag-input-row">
           <input

@@ -32,8 +32,8 @@ body {
   display: flex;
   flex-direction: column;
   background:
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
-    var(--dark-bg);
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+      var(--dark-bg);
 }
 
 /* ─── Header ─────────────────────────────────────────────── */
@@ -55,6 +55,18 @@ body {
   letter-spacing: 3px;
   text-transform: uppercase;
   user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1;
+}
+
+.logo-svg {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
 }
 
 .logo-white { color: #fff; }
@@ -112,6 +124,14 @@ body {
 
 .nav-tab:hover   { color: var(--gold); }
 .nav-tab.active  { color: var(--gold); border-bottom-color: var(--gold); }
+
+.nav-tab-reset {
+  margin-left: auto;
+  color: rgba(127, 7, 7, 0.6);
+  font-size: 12px;
+}
+
+.nav-tab-reset:hover { color: #ff4444; }
 
 /* ─── Main ───────────────────────────────────────────────── */
 .ctf-main { flex: 1; padding: 20px 24px; }
@@ -185,6 +205,39 @@ body {
 .solved-check {
   font-size: 22px;
   color: #4ade80;
+}
+
+/* ─── Challenge link button ──────────────────────────────── */
+.challenge-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 16px;
+  margin-bottom: 14px;
+  background: rgba(248, 207, 30, 0.07);
+  border: 1px solid rgba(248, 207, 30, 0.5);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.challenge-link-btn:hover {
+  background: rgba(248, 207, 30, 0.15);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.challenge-link-btn .link-arrow {
+  margin-left: auto;
+  font-size: 14px;
 }
 
 /* ─── Modal ──────────────────────────────────────────────── */
@@ -265,40 +318,6 @@ body {
   margin-bottom: 16px;
 }
 
-/* ─── Challenge link button ──────────────────────────────── */
-.challenge-link-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 11px 16px;
-  margin-bottom: 14px;
-  background: rgba(248, 207, 30, 0.07);
-  border: 1px solid rgba(248, 207, 30, 0.5);
-  border-radius: 6px;
-  color: var(--gold);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-decoration: none;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
-}
-
-.challenge-link-btn:hover {
-  background: rgba(248, 207, 30, 0.15);
-  border-color: var(--gold);
-  transform: translateY(-1px);
-}
-
-.challenge-link-btn .link-arrow {
-  margin-left: auto;
-  font-size: 14px;
-}
-
-/* ─── Modal hint ─────────────────────────────────────────── */
 .modal-hint {
   background: rgba(0,13,135,0.4);
   border-left: 3px solid var(--navy);

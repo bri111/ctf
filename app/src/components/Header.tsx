@@ -1,3 +1,5 @@
+import logoSrc from '../assets/logo.svg'
+
 type Props = {
   score: number
   solved: number
@@ -8,7 +10,8 @@ export default function Header({ score, solved, total }: Props) {
   return (
     <header className="ctf-header">
       <div className="ctf-logo">
-        🚩 <span className="logo-white">CTF</span>SEC<span className="logo-white">ARENA</span>
+        <img src={logoSrc} alt="logo" className="logo-svg" />
+        <span className="logo-white"> Crack</span>The<span className="logo-white">Egg</span>
       </div>
       <div className="header-stats">
         <div className="stat-pill">
