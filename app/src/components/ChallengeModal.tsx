@@ -1,27 +1,38 @@
 import { useState, useEffect } from 'react'
 import { CHALLENGES, POINT_VALUES } from '../data/challenges'
-import type { ActiveChallenge, SolvedMap } from '../App'
+import type { ActiveChallenge, SolvedMap, HintsRevealedMap } from '../App'
 
 type Props = {
   challenge: NonNullable<ActiveChallenge>
   solved: SolvedMap
+  hintsRevealed: HintsRevealedMap
+  hintsUsed: number
+  maxHints: number
   onClose: () => void
   onSubmit: (flag: string) => 'correct' | 'wrong' | 'already'
+  onUseHint: (challengeKey: string) => 'revealed' | 'denied' | 'cancelled'
   points: number
 }
 
-export default function ChallengeModal({ challenge, solved, onClose, onSubmit, points }: Props) {
+export default function ChallengeModal({
+                                         challenge, solved, hintsRevealed, hintsUsed, maxHints,
+                                         onClose, onSubmit, onUseHint, points,
+                                       }: Props) {
   const { cat, idx, key } = challenge
-  const ch = CHALLENGES[cat][idx]
+  const ch       = CHALLENGES[cat][idx]
   const isSolved = !!solved[key]
 
-  const [input, setInput] = useState('')
-  const [feedback, setFeedback] = useState<{ msg: string; type: string } | null>(null)
+  // Hint is shown if it was previously revealed for this specific challenge
+  const [hintShown, setHintShown] = useState(!!hintsRevealed[key])
+  const [input, setInput]         = useState('')
+  const [feedback, setFeedback]   = useState<{ msg: string; type: string } | null>(null)
 
+  // When switching between challenges, sync hint visibility from persisted state
   useEffect(() => {
     setInput('')
     setFeedback(null)
-  }, [key])
+    setHintShown(!!hintsRevealed[key])
+  }, [key, hintsRevealed])
 
   const handleSubmit = () => {
     const result = onSubmit(input)
@@ -33,6 +44,24 @@ export default function ChallengeModal({ challenge, solved, onClose, onSubmit, p
       setFeedback({ msg: '✘ Incorrect flag. Try again.', type: 'wrong' })
     }
   }
+
+  const handleHintClick = () => {
+    if (hintShown) return
+
+    if (hintsUsed >= maxHints) {
+      alert(`🚫 You've used all ${maxHints} hints! No more hints are available.`)
+      return
+    }
+
+    const result = onUseHint(key)
+    if (result === 'revealed') {
+      setHintShown(true)
+    }
+    // 'cancelled' → user pressed Cancel on confirm, do nothing
+    // 'denied'    → no hints left, already handled above
+  }
+
+  const hintsLeft = maxHints - hintsUsed
 
   return (
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
@@ -58,13 +87,24 @@ export default function ChallengeModal({ challenge, solved, onClose, onSubmit, p
           </a>
         )}
 
-        <div className="modal-hint">
-          <strong>Hint:</strong> {ch.hint}
+        {/* Hint section */}
+        <div className="hint-section">
+          {hintShown ? (
+            <div className="modal-hint">
+              <strong>Hint:</strong> {ch.hint}
+            </div>
+          ) : (
+            <button
+              className={`hint-reveal-btn ${hintsUsed >= maxHints ? 'hint-exhausted' : ''}`}
+              onClick={handleHintClick}
+              disabled={isSolved && !hintShown}
+            >
+              {hintsUsed >= maxHints
+                ? '🚫 No hints remaining'
+                : `💡 Reveal Hint (${hintsLeft} of ${maxHints} left)`}
+            </button>
+          )}
         </div>
-
-        {/*{isSolved && (*/}
-        {/*  <div className="solved-banner">✅ You already solved this challenge!</div>*/}
-        {/*)}*/}
 
         <div className="flag-input-row">
           <input
